@@ -5,6 +5,9 @@
   <title>Contact Luca Mirone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Google reCAPTCHA v3 (SITE KEY ONLY — SAFE) -->
+  <script src="https://www.google.com/recaptcha/api.js?render=6LcK_g8sAAAAAIY9MhWxquc8awqEsltRSLZvyzhe"></script>
 </head>
 <body>
   <main class="app-shell">
@@ -68,6 +71,11 @@
         </button>
 
         <p id="formStatus" class="form-status" aria-live="polite"></p>
+
+        <!-- CSV export button -->
+        <button type="button" id="downloadCsvBtn" class="secondary-btn">
+          Download Leads as CSV
+        </button>
       </form>
 
       <section id="contactDetails" class="contact-details" aria-hidden="true">
