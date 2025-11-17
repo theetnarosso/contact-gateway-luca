@@ -3,18 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const statusEl = document.getElementById("formStatus");
   const contactDetails = document.getElementById("contactDetails");
   const yearEl = document.getElementById("year");
-  const downloadBtn = document.getElementById("downloadCsvBtn");
 
   const RECAPTCHA_SITE_KEY = "6LcK_g8sAAAAAIY9MhWxquc8awqEsltRSLZvyzhe";
 
   if (yearEl) {
     yearEl.textContent = new Date().getFullYear();
-  }
-
-  if (downloadBtn) {
-    downloadBtn.addEventListener("click", () => {
-      downloadLeadsCsv(statusEl);
-    });
   }
 
   form.addEventListener("submit", (event) => {
@@ -46,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Save lead locally (optional, but harmless)
     saveLeadLocally(formData);
 
     const payload = {
@@ -61,6 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     statusEl.textContent = "Verifying identity (reCAPTCHA)...";
     statusEl.className = "form-status";
+
+    if (typeof grecaptcha === "undefined") {
+      statusEl.textContent =
+        "reCAPTCHA failed to load. Please refresh the page and try again.";
+      statusEl.classList.add("error");
+      return;
+    }
 
     grecaptcha.ready(() => {
       grecaptcha
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
               contactDetails.setAttribute("aria-hidden", "false");
 
               statusEl.textContent =
-                "Contact info revealed — but email notification failed.";
+                "Contact info revealed, but email notification failed.";
               statusEl.classList.add("error");
             });
         })
@@ -174,12 +175,11 @@ document.addEventListener("DOMContentLoaded", () => {
       existing.push(lead);
       localStorage.setItem("luca_contact_leads", JSON.stringify(existing));
     } catch (e) {
-      console.warn("Local save failed:", e);
+      console.warn("Local storage save failed:", e);
     }
   }
 
   function sendLeadEmail(payload) {
-    // Formspree endpoint
     const endpoint = "https://formspree.io/f/mwpagjwe";
 
     return fetch(endpoint, {
@@ -193,73 +193,5 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("Email failed");
       return response.json().catch(() => ({}));
     });
-  }
-
-  function downloadLeadsCsv(statusEl) {
-    let raw = localStorage.getItem("luca_contact_leads");
-    if (!raw) {
-      statusEl.textContent = "No leads saved on this device.";
-      statusEl.className = "form-status error";
-      return;
-    }
-
-    let leads;
-    try {
-      leads = JSON.parse(raw);
-    } catch (e) {
-      statusEl.textContent = "Error reading saved leads.";
-      statusEl.className = "form-status error";
-      return;
-    }
-
-    if (!Array.isArray(leads) || leads.length === 0) {
-      statusEl.textContent = "No leads saved on this device.";
-      statusEl.className = "form-status error";
-      return;
-    }
-
-    const headers = [
-      "First Name",
-      "Last Name",
-      "Phone",
-      "Email",
-      "Reason",
-      "Personal Relation",
-      "Business Relation",
-      "Timestamp",
-    ];
-
-    const rows = [headers.join(",")];
-
-    leads.forEach((lead) => {
-      rows.push([
-        escapeCsv(lead.firstName),
-        escapeCsv(lead.lastName),
-        escapeCsv(lead.phone),
-        escapeCsv(lead.email),
-        escapeCsv(lead.reason),
-        escapeCsv(lead.personalRelation),
-        escapeCsv(lead.businessRelation),
-        escapeCsv(lead.timestamp),
-      ].join(","));
-    });
-
-    const csv = rows.join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "luca-contact-leads.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    statusEl.textContent = "CSV exported (from local saved leads).";
-    statusEl.classList.add("success");
-  }
-
-  function escapeCsv(value) {
-    if (value === null || value === undefined) return """";
-    const s = String(value).replace(/"/g, '""');
-    return `"${s}"`;
   }
 });

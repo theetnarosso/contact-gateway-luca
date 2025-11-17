@@ -171,26 +171,6 @@ textarea.error {
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
 }
 
-.secondary-btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 9px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  background: transparent;
-  color: var(--accent);
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.secondary-btn:hover {
-  background-color: rgba(178, 139, 46, 0.06);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-}
-
 .form-status {
   margin-top: 8px;
   font-size: 0.85rem;
