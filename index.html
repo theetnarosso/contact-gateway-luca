@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Luca Mirone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="card">
+      <header class="card-header">
+        <h1>Request Contact Details</h1>
+        <p>Please complete the form below to view Luca’s direct contact information.</p>
+      </header>
+
+      <form id="contactForm" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName">Name<span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" required />
+            <small class="error-msg"></small>
+          </div>
+
+          <div class="field">
+            <label for="lastName">Last Name<span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" required />
+            <small class="error-msg"></small>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone<span class="required">*</span></label>
+          <input type="tel" id="phone" name="phone" required />
+          <small class="error-msg"></small>
+        </div>
+
+        <div class="field">
+          <label for="email">Email<span class="required">*</span></label>
+          <input type="email" id="email" name="email" required />
+          <small class="error-msg"></small>
+        </div>
+
+        <div class="field">
+          <label for="reason">Nature of the reason to contact me<span class="required">*</span></label>
+          <textarea id="reason" name="reason" rows="3" required></textarea>
+          <small class="error-msg"></small>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="personalRelation">Personal Relation</label>
+            <input type="text" id="personalRelation" name="personalRelation"
+                   placeholder="Friend, family, acquaintance..." />
+            <small class="error-msg"></small>
+          </div>
+
+          <div class="field">
+            <label for="businessRelation">Business Relation</label>
+            <input type="text" id="businessRelation" name="businessRelation"
+                   placeholder="Client, partner, vendor..." />
+            <small class="error-msg"></small>
+          </div>
+        </div>
+
+        <button type="submit" class="primary-btn">
+          View Luca’s Contact Info
+        </button>
+
+        <p id="formStatus" class="form-status" aria-live="polite"></p>
+      </form>
+
+      <section id="contactDetails" class="contact-details" aria-hidden="true">
+        <h2>Luca’s Contact Information</h2>
+        <p><strong>Name:</strong> Luca Antonio Mirone</p>
+        <p><strong>Mobile:</strong> <a href="tel:+19173704886">917.370.4886</a></p>
+        <p><strong>Email:</strong> <a href="mailto:Luca@Lucamirone.com">Luca@Lucamirone.com</a></p>
+        <p class="disclaimer">
+          Please keep this information confidential and use it only for the reason stated in your request.
+        </p>
+      </section>
+    </section>
+
+    <footer class="app-footer">
+      <small>© <span id="year"></span> Luca Mirone – Private Contact Gateway</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
