@@ -51,9 +51,25 @@ body {
   margin-bottom: 20px;
 }
 
+.profile-photo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.profile-photo img {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  border: 3px solid #ffffff;
+  outline: 2px solid rgba(178, 139, 46, 0.9);
+}
+
 .card-header h1 {
   font-size: 1.6rem;
-  margin: 0 0 8px;
+  margin: 8px 0 8px;
   letter-spacing: 0.03em;
 }
 

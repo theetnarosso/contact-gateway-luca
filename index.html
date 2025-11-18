@@ -7,13 +7,16 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-  <!-- Google reCAPTCHA v3 (SITE KEY ONLY — SAFE) -->
+  <!-- Google reCAPTCHA v3 -->
   <script src="https://www.google.com/recaptcha/api.js?render=6LcK_g8sAAAAAIY9MhWxquc8awqEsltRSLZvyzhe"></script>
 </head>
 <body>
   <main class="app-shell">
     <section class="card">
       <header class="card-header">
+        <figure class="profile-photo">
+          <img src="luca-mirone.jpg" alt="Portrait of Luca Mirone" />
+        </figure>
         <h1>Request Contact Details</h1>
         <p>Please complete the form below to view Luca’s direct contact information.</p>
       </header>
@@ -26,7 +29,7 @@
             <small class="error-msg"></small>
           </div>
 
-        <div class="field">
+          <div class="field">
             <label for="lastName">Last Name<span class="required">*</span></label>
             <input type="text" id="lastName" name="lastName" required />
             <small class="error-msg"></small>
@@ -54,15 +57,23 @@
         <div class="field-row">
           <div class="field">
             <label for="personalRelation">Personal Relation</label>
-            <input type="text" id="personalRelation" name="personalRelation"
-                   placeholder="Friend, family, acquaintance..." />
+            <input
+              type="text"
+              id="personalRelation"
+              name="personalRelation"
+              placeholder="Friend, family, acquaintance..."
+            />
             <small class="error-msg"></small>
           </div>
 
           <div class="field">
             <label for="businessRelation">Business Relation</label>
-            <input type="text" id="businessRelation" name="businessRelation"
-                   placeholder="Client, partner, vendor..." />
+            <input
+              type="text"
+              id="businessRelation"
+              name="businessRelation"
+              placeholder="Client, partner, vendor..."
+            />
             <small class="error-msg"></small>
           </div>
         </div>
