@@ -7,14 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var RECAPTCHA_SITE_KEY = "6LcK_g8sAAAAAIY9MhWxquc8awqEsltRSLZvyzhe";
   var FORMSPREE_ENDPOINT = "https://formspree.io/f/mwpagjwe";
 
-  // Set footer year
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
-
-  if (!form) {
-    return;
-  }
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  if (!form) return;
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -25,17 +19,11 @@ document.addEventListener("DOMContentLoaded", function () {
     var formData = new FormData(form);
 
     var fields = [
-      "firstName",
-      "lastName",
-      "phone",
-      "email",
-      "reason",
-      "personalRelation",
-      "businessRelation"
+      "firstName","lastName","phone","email",
+      "reason","personalRelation","businessRelation"
     ];
 
     clearErrors(form, fields);
-
     var errors = validateForm(formData);
 
     if (Object.keys(errors).length > 0) {
@@ -45,26 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Optional: store lead locally in this browser
     saveLeadLocally(formData);
-
-    var payload = {
-      firstName: (formData.get("firstName") || "").trim(),
-      lastName: (formData.get("lastName") || "").trim(),
-      phone: (formData.get("phone") || "").trim(),
-      email: (formData.get("email") || "").trim(),
-      reason: (formData.get("reason") || "").trim(),
-      personalRelation: (formData.get("personalRelation") || "").trim(),
-      businessRelation: (formData.get("businessRelation") || "").trim(),
-      submittedAt: new Date().toISOString()
-    };
 
     statusEl.textContent = "Verifying identity (reCAPTCHA)...";
     statusEl.className = "form-status";
 
     if (typeof grecaptcha === "undefined") {
-      statusEl.textContent =
-        "reCAPTCHA failed to load. Please refresh the page and try again.";
+      statusEl.textContent = "reCAPTCHA failed to load. Please refresh and try again.";
       statusEl.classList.add("error");
       return;
     }
@@ -72,12 +47,13 @@ document.addEventListener("DOMContentLoaded", function () {
     grecaptcha.ready(function () {
       grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" })
         .then(function (token) {
-          payload["g-recaptcha-response"] = token;
+          formData.append("g-recaptcha-response", token);
+          formData.append("submittedAt", new Date().toISOString());
 
           statusEl.textContent = "Sending your request...";
           statusEl.className = "form-status";
 
-          sendLeadEmail(payload)
+          sendLeadEmail(formData)
             .then(function () {
               contactDetails.classList.add("visible");
               contactDetails.setAttribute("aria-hidden", "false");
@@ -105,57 +81,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ---------- Validation helpers ----------
-
-  function validateForm(formData) {
+  function validateForm(fd) {
     var errors = {};
+    var email = (fd.get("email") || "").trim();
 
-    var firstName = (formData.get("firstName") || "").trim();
-    var lastName = (formData.get("lastName") || "").trim();
-    var phone = (formData.get("phone") || "").trim();
-    var email = (formData.get("email") || "").trim();
-    var reason = (formData.get("reason") || "").trim();
-
-    if (!firstName) {
-      errors.firstName = "Name is required.";
-    }
-    if (!lastName) {
-      errors.lastName = "Last name is required.";
-    }
-    if (!phone) {
-      errors.phone = "Phone is required.";
-    }
-
-    if (!email) {
-      errors.email = "Email is required.";
-    } else if (!isValidEmail(email)) {
-      errors.email = "Please enter a valid email.";
-    }
-
-    if (!reason) {
-      errors.reason = "Please describe the reason for contact.";
-    }
+    if (!(fd.get("firstName") || "").trim()) errors.firstName = "Name is required.";
+    if (!(fd.get("lastName") || "").trim()) errors.lastName = "Last name is required.";
+    if (!(fd.get("phone") || "").trim()) errors.phone = "Phone is required.";
+    if (!email) errors.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Invalid email.";
+    if (!(fd.get("reason") || "").trim()) errors.reason = "Please describe the reason.";
 
     return errors;
-  }
-
-  function isValidEmail(email) {
-    var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return pattern.test(email);
   }
 
   function clearErrors(form, fields) {
     fields.forEach(function (name) {
       var input = form.elements[name];
       if (!input) return;
-
       input.classList.remove("error");
-      var fieldContainer = input.closest(".field");
-      if (fieldContainer) {
-        var errorMsg = fieldContainer.querySelector(".error-msg");
-        if (errorMsg) {
-          errorMsg.textContent = "";
-        }
+      var c = input.closest(".field");
+      if (c) {
+        var e = c.querySelector(".error-msg");
+        if (e) e.textContent = "";
       }
     });
   }
@@ -164,59 +112,49 @@ document.addEventListener("DOMContentLoaded", function () {
     Object.keys(errors).forEach(function (name) {
       var input = form.elements[name];
       if (!input) return;
-
       input.classList.add("error");
-      var fieldContainer = input.closest(".field");
-      if (fieldContainer) {
-        var errorMsg = fieldContainer.querySelector(".error-msg");
-        if (errorMsg) {
-          errorMsg.textContent = errors[name];
-        }
+      var c = input.closest(".field");
+      if (c) {
+        var e = c.querySelector(".error-msg");
+        if (e) e.textContent = errors[name];
       }
     });
   }
 
-  // ---------- Local storage (optional) ----------
-
-  function saveLeadLocally(formData) {
+  function saveLeadLocally(fd) {
     var lead = {
-      firstName: (formData.get("firstName") || "").trim(),
-      lastName: (formData.get("lastName") || "").trim(),
-      phone: (formData.get("phone") || "").trim(),
-      email: (formData.get("email") || "").trim(),
-      reason: (formData.get("reason") || "").trim(),
-      personalRelation: (formData.get("personalRelation") || "").trim(),
-      businessRelation: (formData.get("businessRelation") || "").trim(),
+      firstName: (fd.get("firstName")||"").trim(),
+      lastName: (fd.get("lastName")||"").trim(),
+      phone: (fd.get("phone")||"").trim(),
+      email: (fd.get("email")||"").trim(),
+      reason: (fd.get("reason")||"").trim(),
+      personalRelation: (fd.get("personalRelation")||"").trim(),
+      businessRelation: (fd.get("businessRelation")||"").trim(),
       timestamp: new Date().toISOString()
     };
 
     try {
-      var existingRaw = localStorage.getItem("luca_contact_leads") || "[]";
-      var existing = JSON.parse(existingRaw);
+      var existing = JSON.parse(localStorage.getItem("luca_contact_leads") || "[]");
       existing.push(lead);
       localStorage.setItem("luca_contact_leads", JSON.stringify(existing));
-    } catch (e) {
-      console.warn("Local storage save failed:", e);
-    }
+    } catch (e) { console.warn("LocalStorage failed:", e); }
   }
 
-  // ---------- Formspree call ----------
-
-  function sendLeadEmail(payload) {
+  function sendLeadEmail(formData) {
     return fetch(FORMSPREE_ENDPOINT, {
       method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
+      headers: { "Accept": "application/json" },
+      body: formData
     }).then(function (response) {
       if (!response.ok) {
-        throw new Error("Email failed");
+        return response.json().then(function (data) {
+          console.error("Formspree error:", data);
+          throw new Error("Formspree error");
+        }).catch(function () {
+          throw new Error("Formspree error");
+        });
       }
-      return response.json().catch(function () {
-        return {};
-      });
+      return response.json().catch(() => ({}));
     });
   }
 });
