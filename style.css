@@ -51,6 +51,7 @@ body {
   margin-bottom: 20px;
 }
 
+/* Portrait at the top */
 .profile-photo {
   display: flex;
   justify-content: center;
@@ -62,9 +63,18 @@ body {
   height: 120px;
   border-radius: 999px;
   object-fit: cover;
+  object-position: center;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
   border: 3px solid #ffffff;
   outline: 2px solid rgba(178, 139, 46, 0.9);
+}
+
+/* Slightly smaller portrait on small phones */
+@media (max-width: 480px) {
+  .profile-photo img {
+    width: 96px;
+    height: 96px;
+  }
 }
 
 .card-header h1 {
